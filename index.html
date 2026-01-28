@@ -6,894 +6,509 @@
    <title>British Superbike Podium Predictor</title>
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
    <style>
+       :root {
+           --primary-color: #1a1a2e;
+           --accent-color: #e63946;
+           --secondary-color: #0f3460;
+           --light-color: #f1faee;
+           --text-color: #333;
+           --card-bg: #fff;
+           --border-radius: 8px;
+           --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+       }
+
        * {
            margin: 0;
            padding: 0;
            box-sizing: border-box;
-           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
        }
 
        body {
-           background-color: #0a0a1a;
-           color: white;
-           min-height: 100vh;
-           background-image:
-               radial-gradient(circle at 20% 30%, rgba(10, 30, 80, 0.3) 0%, transparent 40%),
-               radial-gradient(circle at 80% 70%, rgba(200, 30, 30, 0.2) 0%, transparent 40%),
-               linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.8)),
-               url('https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?q=80&w=1470');
-           background-size: cover;
-           background-position: center;
-           background-attachment: fixed;
+           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+           line-height: 1.6;
+           color: var(--text-color);
+           background-color: #f5f5f5;
+           background-image: linear-gradient(to bottom, #f8f9fa, #e9ecef);
        }
 
        .container {
            max-width: 1200px;
            margin: 0 auto;
-           padding: 20px;
+           padding: 0 20px;
        }
 
        /* Header Styles */
        header {
+           background-color: var(--primary-color);
+           color: var(--light-color);
+           padding: 20px 0;
+           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+       }
+
+       .header-content {
            display: flex;
            justify-content: space-between;
            align-items: center;
-           padding: 20px 0;
-           border-bottom: 3px solid #e10600;
-           margin-bottom: 40px;
            flex-wrap: wrap;
        }
 
        .logo-container {
            display: flex;
            align-items: center;
-           gap: 20px;
+           gap: 15px;
        }
 
-       .bsb-logo {
-           width: 80px;
-           height: 80px;
-           background: linear-gradient(135deg, #e10600, #ff3b30);
-           border-radius: 50%;
-           display: flex;
-           align-items: center;
-           justify-content: center;
-           font-weight: 900;
+       .logo {
+           max-width: 80px;
+           height: auto;
+       }
+
+       .logo-text {
            font-size: 1.8rem;
-           color: white;
-           box-shadow: 0 0 20px rgba(225, 6, 0, 0.5);
-           border: 3px solid white;
-       }
-
-       .brand-text {
-           text-transform: uppercase;
-           font-weight: 900;
-           font-size: 2.5rem;
-           color: white;
-           letter-spacing: 2px;
-           text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-       }
-
-       .brand-text span {
-           color: #e10600;
-       }
-
-       .header-tagline {
-           font-size: 1.1rem;
-           color: #ccc;
+           font-weight: 700;
            letter-spacing: 1px;
+       }
+
+       .logo-text span {
+           color: var(--accent-color);
+       }
+
+       .social-links {
+           display: flex;
+           gap: 15px;
+       }
+
+       .social-icon {
+           color: var(--light-color);
+           font-size: 1.5rem;
+           transition: color 0.3s;
+       }
+
+       .social-icon:hover {
+           color: var(--accent-color);
+       }
+
+       /* Hero Section */
+       .hero {
+           background: linear-gradient(rgba(26, 26, 46, 0.9), rgba(26, 26, 46, 0.9)), url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwMCIgaGVpZ2h0PSI0MDAiIHZpZXdCb3g9IjAgMCAxMjAwIDQwMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTAgMEgxMjAwVjQwMEgweiIgZmlsbD0idXJsKCNwYWludDBfbGluZWFyXzM5MV8zMzcpIi8+CjxwYXRoIGQ9Ik0xMjAwIDBWMzYwTDAgNDAwVjQweiIgZmlsbD0idXJsKCNwYWludDFfbGluZWFyXzM5MV8zMzcpIi8+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9InBhaW50MF9saW5lYXJfMzkxXzMzNyIgeDE9IjAiIHkxPSIwIiB4Mj0iMTIwMCIgeTI9IjQwMCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjMUEyQTM5Ii8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzBGMzQ2MCIvPgo8L2xpbmVhckdyYWRpZW50Pgo8bGluZWFyR3JhZGllbnQgaWQ9InBhaW50MV9saW5lYXJfMzkxXzMzNyIgeDE9IjAiIHkxPSIwIiB4Mj0iMTIwMCIgeTI9IjQwMCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjRTYzOTQ2IiBzdG9wLW9wYWNpdHk9IjAuMyIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNBMkIzQ0IiIHN0b3Atb3BhY2l0eT0iMC4xIi8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPC9zdmc+');
+           background-size: cover;
+           background-position: center;
+           color: var(--light-color);
+           padding: 60px 0;
+           text-align: center;
+       }
+
+       .hero h1 {
+           font-size: 2.8rem;
+           margin-bottom: 15px;
+           letter-spacing: 1px;
+       }
+
+       .hero p {
+           font-size: 1.2rem;
+           max-width: 800px;
+           margin: 0 auto 30px;
+       }
+
+       .cta-button {
+           display: inline-block;
+           background-color: var(--accent-color);
+           color: var(--light-color);
+           padding: 12px 30px;
+           border-radius: var(--border-radius);
+           text-decoration: none;
+           font-weight: 600;
+           font-size: 1.1rem;
+           transition: all 0.3s;
+           border: none;
+           cursor: pointer;
+       }
+
+       .cta-button:hover {
+           background-color: #c1121f;
+           transform: translateY(-3px);
+           box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
        }
 
        /* Main Content */
        .main-content {
-           display: flex;
-           flex-direction: column;
-           align-items: center;
-           gap: 40px;
-           margin-bottom: 60px;
-       }
-
-       .title-section {
-           text-align: center;
-           margin-bottom: 20px;
-       }
-
-       .british-superbike {
-           font-size: 4rem;
-           font-weight: 900;
-           letter-spacing: 6px;
-           color: white;
-           text-transform: uppercase;
-           text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9);
-           margin-bottom: 10px;
-           line-height: 1.1;
-           background: linear-gradient(to right, white, #e10600);
-           -webkit-background-clip: text;
-           -webkit-text-fill-color: transparent;
-           background-clip: text;
-       }
-
-       .podium-predictor {
-           font-size: 5rem;
-           font-weight: 900;
-           letter-spacing: 10px;
-           color: #ffcc00;
-           text-transform: uppercase;
-           text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.9);
-           line-height: 1;
-           position: relative;
-       }
-
-       .podium-predictor::after {
-           content: "";
-           position: absolute;
-           bottom: -10px;
-           left: 50%;
-           transform: translateX(-50%);
-           width: 200px;
-           height: 4px;
-           background: linear-gradient(to right, #e10600, #ffcc00, #e10600);
-           border-radius: 2px;
-       }
-
-       .subtitle {
-           font-size: 1.8rem;
-           margin-top: 25px;
-           color: #ddd;
-           font-weight: 300;
-           letter-spacing: 2px;
-       }
-
-       /* Podium Section */
-       .podium-container {
-           display: flex;
-           justify-content: center;
-           align-items: flex-end;
-           height: 420px;
-           margin: 30px 0;
-           width: 100%;
-           max-width: 900px;
-           position: relative;
-       }
-
-       .podium-step {
-           display: flex;
-           flex-direction: column;
-           align-items: center;
-           justify-content: flex-end;
-           width: 33%;
-           position: relative;
-           padding-bottom: 20px;
-           border-radius: 10px 10px 0 0;
-           transition: transform 0.3s ease;
-       }
-
-       .podium-step:hover {
-           transform: translateY(-5px);
-       }
-
-       .podium-step:nth-child(1) {
-           height: 65%;
-           background: linear-gradient(to top, #b0b0b0, #808080);
-           box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
-       }
-
-       .podium-step:nth-child(2) {
-           height: 100%;
-           background: linear-gradient(to top, #ffcc00, #e6b800);
-           order: 2;
-           margin: 0 10px;
-           box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5), 0 5px 20px rgba(255, 204, 0, 0.3);
-       }
-
-       .podium-step:nth-child(3) {
-           height: 50%;
-           background: linear-gradient(to top, #cd7f32, #a66928);
-           box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
-       }
-
-       .position-number {
-           font-size: 8rem;
-           font-weight: 900;
-           color: rgba(0, 0, 0, 0.7);
-           position: absolute;
-           top: 20px;
-           text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.3);
-       }
-
-       .rider-container {
-           position: absolute;
-           bottom: 100%;
-           width: 100%;
-           display: flex;
-           flex-direction: column;
-           align-items: center;
-           margin-bottom: 20px;
-       }
-
-       .rider-name {
-           font-size: 1.5rem;
-           font-weight: 700;
-           background-color: rgba(10, 10, 26, 0.95);
-           padding: 12px 20px;
-           border-radius: 8px;
-           margin-bottom: 10px;
-           width: 90%;
-           text-align: center;
-           border: 3px solid #e10600;
-           color: white;
-           text-transform: uppercase;
-           letter-spacing: 1px;
-           box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-       }
-
-       .rider-number {
-           background: linear-gradient(135deg, #e10600, #ff3b30);
-           color: white;
-           width: 65px;
-           height: 65px;
-           border-radius: 50%;
-           display: flex;
-           align-items: center;
-           justify-content: center;
-           font-size: 2.2rem;
-           font-weight: 900;
-           border: 4px solid white;
-           box-shadow: 0 0 15px rgba(225, 6, 0, 0.7);
-       }
-
-       /* Prediction Form */
-       .prediction-form-container {
-           background-color: rgba(20, 20, 40, 0.95);
-           border-radius: 15px;
-           padding: 35px;
-           width: 100%;
-           max-width: 850px;
-           border: 3px solid #e10600;
-           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
-           position: relative;
-           overflow: hidden;
-       }
-
-       .prediction-form-container::before {
-           content: "";
-           position: absolute;
-           top: 0;
-           left: 0;
-           right: 0;
-           height: 5px;
-           background: linear-gradient(to right, #e10600, #ffcc00, #e10600);
-       }
-
-       .form-title {
-           text-align: center;
-           font-size: 2.5rem;
-           margin-bottom: 35px;
-           color: #ffcc00;
-           text-transform: uppercase;
-           letter-spacing: 3px;
-           text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-       }
-
-       .prediction-form {
-           display: flex;
-           flex-direction: column;
+           display: grid;
+           grid-template-columns: 1fr;
            gap: 30px;
+           padding: 50px 0;
        }
 
-       .form-group {
-           display: flex;
-           flex-direction: column;
-           gap: 12px;
+       @media (min-width: 992px) {
+           .main-content {
+               grid-template-columns: 1fr 1fr;
+           }
        }
 
-       .form-group label {
-           font-size: 1.3rem;
-           font-weight: 600;
-           color: #ddd;
-           letter-spacing: 1px;
-           display: flex;
-           align-items: center;
-           gap: 10px;
+       .card {
+           background-color: var(--card-bg);
+           border-radius: var(--border-radius);
+           padding: 30px;
+           box-shadow: var(--box-shadow);
        }
 
-       .form-group label i {
-           color: #ffcc00;
+       .card h2 {
+           color: var(--secondary-color);
+           margin-bottom: 20px;
+           padding-bottom: 10px;
+           border-bottom: 2px solid var(--accent-color);
        }
 
-       .form-group select {
-           padding: 18px;
-           background-color: rgba(30, 30, 50, 0.9);
-           border: 2px solid #444;
-           border-radius: 10px;
-           color: white;
-           font-size: 1.2rem;
-           transition: all 0.3s;
-           cursor: pointer;
+       .card h3 {
+           color: var(--primary-color);
+           margin: 20px 0 10px;
        }
 
-       .form-group select:focus {
-           outline: none;
-           border-color: #ffcc00;
-           box-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
-           background-color: rgba(40, 40, 60, 0.9);
-       }
-
-       .predict-btn {
-           background: linear-gradient(to right, #e10600, #ff3b30);
-           color: white;
-           border: none;
-           padding: 20px;
-           font-size: 1.5rem;
-           font-weight: 700;
-           text-transform: uppercase;
-           letter-spacing: 3px;
-           border-radius: 10px;
-           cursor: pointer;
-           transition: all 0.3s;
-           margin-top: 20px;
-           box-shadow: 0 5px 15px rgba(225, 6, 0, 0.4);
-           display: flex;
-           align-items: center;
-           justify-content: center;
-           gap: 15px;
-       }
-
-       .predict-btn:hover {
-           background: linear-gradient(to right, #ff3b30, #e10600);
-           transform: translateY(-3px);
-           box-shadow: 0 8px 20px rgba(225, 6, 0, 0.6);
-       }
-
-       .predict-btn:active {
-           transform: translateY(1px);
-       }
-
-       /* Results Section */
-       .results-container {
-           background-color: rgba(20, 20, 40, 0.95);
-           border-radius: 15px;
-           padding: 35px;
-           width: 100%;
-           max-width: 850px;
-           border: 3px solid #ffcc00;
-           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
-           margin-top: 30px;
-           display: none;
-           position: relative;
-           overflow: hidden;
-       }
-
-       .results-container::before {
-           content: "";
-           position: absolute;
-           top: 0;
-           left: 0;
-           right: 0;
-           height: 5px;
-           background: linear-gradient(to right, #ffcc00, #e10600, #ffcc00);
-       }
-
-       .results-title {
-           text-align: center;
-           font-size: 2.5rem;
-           margin-bottom: 35px;
-           color: #ffcc00;
-           text-transform: uppercase;
-           letter-spacing: 3px;
-           text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-       }
-
-       .prediction-results {
-           display: flex;
-           justify-content: space-around;
-           flex-wrap: wrap;
-           gap: 25px;
-       }
-
-       .result-item {
-           background: linear-gradient(145deg, rgba(30, 30, 50, 0.9), rgba(20, 20, 40, 0.9));
-           padding: 25px;
-           border-radius: 12px;
-           flex: 1;
-           min-width: 220px;
-           text-align: center;
-           border-top: 5px solid #e10600;
-           box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-           transition: transform 0.3s ease;
-       }
-
-       .result-item:hover {
-           transform: translateY(-5px);
-       }
-
-       .result-position {
-           font-size: 2.8rem;
-           font-weight: 900;
-           color: #ffcc00;
+       .card ul, .card ol {
+           padding-left: 20px;
            margin-bottom: 15px;
-           text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
        }
 
-       .result-rider {
-           font-size: 1.7rem;
-           font-weight: 600;
-           color: white;
-           text-transform: uppercase;
-           letter-spacing: 1px;
+       .card li {
+           margin-bottom: 8px;
        }
 
-       .reset-btn {
-           background: transparent;
-           color: #ffcc00;
-           border: 3px solid #ffcc00;
-           padding: 18px 40px;
-           font-size: 1.3rem;
-           font-weight: 600;
-           text-transform: uppercase;
-           letter-spacing: 2px;
-           border-radius: 10px;
-           cursor: pointer;
-           transition: all 0.3s;
-           display: block;
-           margin: 40px auto 0;
+       /* Competition Image */
+       .competition-image {
+           text-align: center;
+           margin-bottom: 30px;
        }
 
-       .reset-btn:hover {
-           background-color: #ffcc00;
-           color: #0a0a1a;
-           box-shadow: 0 5px 15px rgba(255, 204, 0, 0.4);
+       .competition-image img {
+           max-width: 100%;
+           height: auto;
+           border-radius: var(--border-radius);
+           box-shadow: var(--box-shadow);
+           border: 5px solid var(--light-color);
+       }
+
+       .image-placeholder {
+           background-color: var(--primary-color);
+           color: var(--light-color);
+           padding: 60px 20px;
+           border-radius: var(--border-radius);
+           text-align: center;
+       }
+
+       .image-placeholder i {
+           font-size: 3rem;
+           margin-bottom: 15px;
+           color: var(--accent-color);
+       }
+
+       /* Scoring Table */
+       .scoring-table {
+           width: 100%;
+           border-collapse: collapse;
+           margin-top: 20px;
+       }
+
+       .scoring-table th, .scoring-table td {
+           padding: 12px 15px;
+           text-align: left;
+           border-bottom: 1px solid #ddd;
+       }
+
+       .scoring-table th {
+           background-color: var(--secondary-color);
+           color: var(--light-color);
+       }
+
+       .scoring-table tr:nth-child(even) {
+           background-color: #f9f9f9;
+       }
+
+       .scoring-table tr:hover {
+           background-color: #f1f1f1;
        }
 
        /* Footer */
        footer {
+           background-color: var(--primary-color);
+           color: var(--light-color);
+           padding: 30px 0;
            text-align: center;
-           padding: 40px 0 30px;
-           border-top: 2px solid #333;
-           color: #aaa;
-           font-size: 1rem;
-           letter-spacing: 1px;
+           margin-top: 40px;
+       }
+
+       .footer-content {
+           display: flex;
+           flex-direction: column;
+           align-items: center;
+           gap: 20px;
        }
 
        .footer-logo {
-           width: 200px;
-           margin: 0 auto 20px;
-           display: flex;
-           justify-content: center;
+           font-size: 1.5rem;
+           font-weight: 700;
+           letter-spacing: 1px;
        }
 
-       .bsb-footer-logo {
-           font-size: 2.5rem;
-           font-weight: 900;
-           color: #e10600;
-           text-transform: uppercase;
-           letter-spacing: 5px;
-           text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+       .footer-logo span {
+           color: var(--accent-color);
        }
 
-       .bsb-footer-logo span {
-           color: #ffcc00;
-       }
-
-       .footer-disclaimer {
-           max-width: 800px;
-           margin: 20px auto 0;
+       .disclaimer {
            font-size: 0.9rem;
-           color: #888;
-           line-height: 1.5;
+           max-width: 800px;
+           opacity: 0.8;
        }
 
-       /* Responsive Design */
-       @media (max-width: 900px) {
-           .british-superbike {
-               font-size: 3rem;
-               letter-spacing: 4px;
-           }
-
-           .podium-predictor {
-               font-size: 3.8rem;
-               letter-spacing: 6px;
-           }
-
-           .podium-container {
-               height: 350px;
-           }
-
-           .position-number {
-               font-size: 6rem;
-           }
-
-           .brand-text {
-               font-size: 2rem;
-           }
-       }
-
-       @media (max-width: 650px) {
-           header {
+       /* Responsive adjustments */
+       @media (max-width: 768px) {
+           .header-content {
                flex-direction: column;
-               gap: 20px;
                text-align: center;
-           }
-
-           .logo-container {
-               flex-direction: column;
                gap: 15px;
            }
 
-           .british-superbike {
+           .logo-container {
+               justify-content: center;
+           }
+
+           .hero h1 {
                font-size: 2.2rem;
-               letter-spacing: 3px;
            }
 
-           .podium-predictor {
-               font-size: 2.8rem;
-               letter-spacing: 4px;
-           }
-
-           .subtitle {
-               font-size: 1.4rem;
-           }
-
-           .podium-container {
-               height: 300px;
-           }
-
-           .position-number {
-               font-size: 4.5rem;
-           }
-
-           .rider-name {
-               font-size: 1.2rem;
-               padding: 10px 15px;
-           }
-
-           .rider-number {
-               width: 55px;
-               height: 55px;
-               font-size: 1.8rem;
-           }
-
-           .prediction-form-container, .results-container {
-               padding: 25px;
-           }
-
-           .form-title, .results-title {
-               font-size: 2rem;
-           }
-       }
-
-       @media (max-width: 500px) {
-           .podium-container {
-               flex-direction: column;
-               align-items: center;
-               height: auto;
-               gap: 10px;
-           }
-
-           .podium-step {
-               width: 90%;
-               height: 130px;
-               margin-bottom: 10px;
-               border-radius: 10px;
-           }
-
-           .podium-step:nth-child(2) {
-               order: 0;
-               margin: 10px 0;
-           }
-
-           .rider-container {
-               position: static;
-               flex-direction: row;
-               justify-content: space-between;
-               padding: 0 20px;
-               margin-bottom: 0;
-           }
-
-           .position-number {
-               position: static;
-               font-size: 3.5rem;
-               margin-right: 20px;
-           }
-
-           .british-superbike {
-               font-size: 1.8rem;
-               letter-spacing: 2px;
-           }
-
-           .podium-predictor {
-               font-size: 2.2rem;
-               letter-spacing: 3px;
+           .card {
+               padding: 20px;
            }
        }
    </style>
 </head>
 <body>
+   <!-- Header -->
+   <header>
+       <div class="container">
+           <div class="header-content">
+               <div class="logo-container">
+                   <!-- Logo placeholder - replace with actual logo if available -->
+                   <div class="logo">
+                       <i class="fas fa-flag-checkered" style="font-size: 3rem; color: #e63946;"></i>
+                   </div>
+                   <div class="logo-text">BSB <span>Podium Predictor</span></div>
+               </div>
+               <div class="social-links">
+                   <a href="#" class="social-icon" aria-label="Facebook">
+                       <i class="fab fa-facebook"></i>
+                   </a>
+                   <a href="#" class="social-icon" aria-label="Twitter">
+                       <i class="fab fa-twitter"></i>
+                   </a>
+                   <a href="#" class="social-icon" aria-label="Instagram">
+                       <i class="fab fa-instagram"></i>
+                   </a>
+               </div>
+           </div>
+       </div>
+   </header>
+
+   <!-- Hero Section -->
+   <section class="hero">
+       <div class="container">
+           <h1>British Superbike Podium Predictor</h1>
+           <p>A fun, season-long Facebook competition where BSB fans put their race knowledge to the test!</p>
+           <a href="#rules" class="cta-button">View Competition Rules</a>
+       </div>
+   </section>
+
+   <!-- Main Content -->
    <div class="container">
-       <header>
-           <div class="logo-container">
-               <div class="bsb-logo">BSB</div>
-               <div>
-                   <h1 class="brand-text">British <span>Superbike</span></h1>
-                   <p class="header-tagline">Official Podium Predictor Game</p>
-               </div>
+       <!-- Competition Image -->
+       <div class="competition-image">
+           <div class="image-placeholder">
+               <i class="fas fa-motorcycle"></i>
+               <h3>British Superbike Podium Predictor Image</h3>
+               <p>Image from the competition design would appear here</p>
+               <p><small>For the actual website, replace this with the provided JPEG image</small></p>
            </div>
-       </header>
+           <!-- In actual implementation, uncomment the line below and add the image -->
+           <!-- <img src="IMG_1735.jpeg" alt="British Superbike Podium Predictor"> -->
+       </div>
 
-       <main class="main-content">
-           <div class="title-section">
-               <h1 class="british-superbike">British Superbike</h1>
-               <h2 class="podium-predictor">Podium Predictor</h2>
-               <p class="subtitle">Predict the top 3 riders for the next race</p>
-           </div>
+       <!-- Bio and Rules -->
+       <div class="main-content">
+           <!-- Bio Section -->
+           <div class="card">
+               <h2>About The Competition</h2>
+               <p>Welcome to the British Superbike Podium Predictor - a fun, season-long Facebook competition where BSB fans put their race knowledge to the test!</p>
 
-           <div class="podium-container">
-               <div class="podium-step">
-                   <div class="position-number">2</div>
-                   <div class="rider-container">
-                       <div class="rider-name" id="second-place">Jason O'Halloran</div>
-                       <div class="rider-number">22</div>
-                   </div>
-               </div>
-               <div class="podium-step">
-                   <div class="position-number">1</div>
-                   <div class="rider-container">
-                       <div class="rider-name" id="first-place">Tarran Mackenzie</div>
-                       <div class="rider-number">95</div>
-                   </div>
-               </div>
-               <div class="podium-step">
-                   <div class="position-number">3</div>
-                   <div class="rider-container">
-                       <div class="rider-name" id="third-place">Kyle Ryde</div>
-                       <div class="rider-number">77</div>
-                   </div>
-               </div>
+               <p>For each BSB round, participants predict the podium finishers (1st, 2nd & 3rd). One prediction covers all three races of the round, with points awarded for correct predictions and standings updated after every round to form an overall league table.</p>
+
+               <p>This competition is just for fun, bragging rights, and community engagement. All skill levels welcome!</p>
+
+               <h3>How It Works</h3>
+               <ul>
+                   <li>Predict the podium for each BSB round (1st, 2nd, 3rd)</li>
+                   <li>Your prediction applies to all three races of that round</li>
+                   <li>Earn points for correct predictions</li>
+                   <li>Track your progress on the league table</li>
+                   <li>Compete with other BSB fans throughout the season</li>
+               </ul>
            </div>
 
-           <div class="prediction-form-container">
-               <h3 class="form-title">Predict the Podium</h3>
-               <form class="prediction-form" id="predictionForm">
-                   <div class="form-group">
-                       <label for="first-select"><i class="fas fa-trophy"></i> 1st Place</label>
-                       <select id="first-select" required>
-                           <option value="">Select Rider</option>
-                           <option value="Tarran Mackenzie">Tarran Mackenzie (#95)</option>
-                           <option value="Jason O'Halloran">Jason O'Halloran (#22)</option>
-                           <option value="Kyle Ryde">Kyle Ryde (#77)</option>
-                           <option value="Bradley Ray">Bradley Ray (#28)</option>
-                           <option value="Lee Jackson">Lee Jackson (#14)</option>
-                           <option value="Tommy Bridewell">Tommy Bridewell (#46)</option>
-                           <option value="Glenn Irwin">Glenn Irwin (#2)</option>
-                           <option value="Rory Skinner">Rory Skinner (#69)</option>
-                           <option value="Peter Hickman">Peter Hickman (#60)</option>
-                           <option value="Josh Brookes">Josh Brookes (#25)</option>
-                       </select>
-                   </div>
+           <!-- Rules Section -->
+           <div class="card" id="rules">
+               <h2>Competition Rules</h2>
 
-                   <div class="form-group">
-                       <label for="second-select"><i class="fas fa-medal"></i> 2nd Place</label>
-                       <select id="second-select" required>
-                           <option value="">Select Rider</option>
-                           <option value="Tarran Mackenzie">Tarran Mackenzie (#95)</option>
-                           <option value="Jason O'Halloran">Jason O'Halloran (#22)</option>
-                           <option value="Kyle Ryde">Kyle Ryde (#77)</option>
-                           <option value="Bradley Ray">Bradley Ray (#28)</option>
-                           <option value="Lee Jackson">Lee Jackson (#14)</option>
-                           <option value="Tommy Bridewell">Tommy Bridewell (#46)</option>
-                           <option value="Glenn Irwin">Glenn Irwin (#2)</option>
-                           <option value="Rory Skinner">Rory Skinner (#69)</option>
-                           <option value="Peter Hickman">Peter Hickman (#60)</option>
-                           <option value="Josh Brookes">Josh Brookes (#25)</option>
-                       </select>
-                   </div>
+               <h3>1. Eligibility</h3>
+               <ul>
+                   <li>Open to anyone with a Facebook account.</li>
+                   <li>Entry is free.</li>
+                   <li>By participating, you agree to these rules.</li>
+               </ul>
 
-                   <div class="form-group">
-                       <label for="third-select"><i class="fas fa-award"></i> 3rd Place</label>
-                       <select id="third-select" required>
-                           <option value="">Select Rider</option>
-                           <option value="Tarran Mackenzie">Tarran Mackenzie (#95)</option>
-                           <option value="Jason O'Halloran">Jason O'Halloran (#22)</option>
-                           <option value="Kyle Ryde">Kyle Ryde (#77)</option>
-                           <option value="Bradley Ray">Bradley Ray (#28)</option>
-                           <option value="Lee Jackson">Lee Jackson (#14)</option>
-                           <option value="Tommy Bridewell">Tommy Bridewell (#46)</option>
-                           <option value="Glenn Irwin">Glenn Irwin (#2)</option>
-                           <option value="Rory Skinner">Rory Skinner (#69)</option>
-                           <option value="Peter Hickman">Peter Hickman (#60)</option>
-                           <option value="Josh Brookes">Josh Brookes (#25)</option>
-                       </select>
-                   </div>
+               <h3>2. How to Enter</h3>
+               <ul>
+                   <li>For each BSB round, submit one podium prediction:
+                       <ul>
+                           <li>1st place</li>
+                           <li>2nd place</li>
+                           <li>3rd place</li>
+                       </ul>
+                   </li>
+                   <li>This single prediction will apply to all three races of a round.</li>
+                   <li>Predictions must be posted before the Free Practice 1 (FP1) begins for that round.</li>
+                   <li>Late entries or edits after FP1 starts will not be counted.</li>
+               </ul>
 
-                   <button type="submit" class="predict-btn">
-                       <i class="fas fa-flag-checkered"></i> Submit Prediction
-                   </button>
-               </form>
+               <h3>3. Scoring System</h3>
+               <p>Points are awarded per race, using the same prediction across all three races:</p>
+               <ul>
+                   <li>5 points for a complete podium predicted correctly (all three riders in the correct positions).</li>
+                   <li>1 point for each individual podium position correctly predicted (correct rider in correct finishing position).</li>
+                   <li>No points for correct riders in incorrect positions.</li>
+               </ul>
+
+               <h4>Maximum possible points per round:</h4>
+               <p>5 points × 3 races = 15 points</p>
+
+               <table class="scoring-table">
+                   <thead>
+                       <tr>
+                           <th>Prediction Accuracy</th>
+                           <th>Points per Race</th>
+                           <th>Points per Round (3 races)</th>
+                       </tr>
+                   </thead>
+                   <tbody>
+                       <tr>
+                           <td>Perfect podium (1st, 2nd, 3rd all correct)</td>
+                           <td>5 points</td>
+                           <td>15 points</td>
+                       </tr>
+                       <tr>
+                           <td>One correct position (e.g., correct 1st place)</td>
+                           <td>1 point</td>
+                           <td>3 points</td>
+                       </tr>
+                       <tr>
+                           <td>Two correct positions (e.g., correct 1st and 2nd)</td>
+                           <td>2 points</td>
+                           <td>6 points</td>
+                       </tr>
+                       <tr>
+                           <td>Three correct riders but wrong positions</td>
+                           <td>0 points</td>
+                           <td>0 points</td>
+                       </tr>
+                   </tbody>
+               </table>
+
+               <h3>4. League Table</h3>
+               <ul>
+                   <li>Points are totaled after each round.</li>
+                   <li>A running league table will be posted on the page.</li>
+                   <li>The league table will determine standings throughout the season.</li>
+               </ul>
+
+               <h3>5. Tie-Breakers</h3>
+               <p>If required (e.g. end of season):</p>
+               <ol>
+                   <li>Most correctly predicted full podiums</li>
+                   <li>Most total individual podium positions correct</li>
+                   <li>Earliest correct prediction submission for the final round</li>
+               </ol>
+
+               <h3>6. Changes & Cancellations</h3>
+               <ul>
+                   <li>If a race is cancelled, no points will be awarded for that race.</li>
+                   <li>If fewer than three races run in a round, scoring applies only to completed races.</li>
+                   <li>The organiser reserves the right to clarify or amend rules if unforeseen situations arise.</li>
+               </ul>
+
+               <h3>7. Prizes</h3>
+               <ul>
+                   <li>The competition is purely for fun.</li>
+               </ul>
+
+               <h3>8. Disclaimer</h3>
+               <ul>
+                   <li>This competition is not affiliated with or endorsed by British Superbike Championship, MSVR, or Facebook.</li>
+                   <li>Facebook bears no responsibility for this competition.</li>
+               </ul>
            </div>
-
-           <div class="results-container" id="resultsContainer">
-               <h3 class="results-title">Your Prediction</h3>
-               <div class="prediction-results">
-                   <div class="result-item">
-                       <div class="result-position">1st</div>
-                       <div class="result-rider" id="result-first">Tarran Mackenzie</div>
-                   </div>
-                   <div class="result-item">
-                       <div class="result-position">2nd</div>
-                       <div class="result-rider" id="result-second">Jason O'Halloran</div>
-                   </div>
-                   <div class="result-item">
-                       <div class="result-position">3rd</div>
-                       <div class="result-rider" id="result-third">Kyle Ryde</div>
-                   </div>
-               </div>
-               <button class="reset-btn" id="resetBtn">
-                   <i class="fas fa-redo"></i> Make New Prediction
-               </button>
-           </div>
-       </main>
-
-       <footer>
-           <div class="footer-logo">
-               <div class="bsb-footer-logo">BSB<span>Predictor</span></div>
-           </div>
-           <p>© 2023 British Superbike Podium Predictor. All rights reserved.</p>
-           <div class="footer-disclaimer">
-               <p>This is an interactive predictor game for entertainment purposes. This website is not affiliated with the official British Superbike Championship. All team and rider names are trademarks of their respective owners.</p>
-           </div>
-       </footer>
+       </div>
    </div>
 
+   <!-- Footer -->
+   <footer>
+       <div class="container">
+           <div class="footer-content">
+               <div class="footer-logo">BSB <span>Podium Predictor</span></div>
+               <p class="disclaimer">This competition is not affiliated with or endorsed by British Superbike Championship, MSVR, or Facebook. Facebook bears no responsibility for this competition.</p>
+               <p>&copy; <span id="currentYear"></span> British Superbike Podium Predictor. For entertainment purposes only.</p>
+           </div>
+       </div>
+   </footer>
+
    <script>
-       document.addEventListener('DOMContentLoaded', function() {
-           const predictionForm = document.getElementById('predictionForm');
-           const resultsContainer = document.getElementById('resultsContainer');
-           const resetBtn = document.getElementById('resetBtn');
+       // Set current year in footer
+       document.getElementById('currentYear').textContent = new Date().getFullYear();
 
-           // Set default values for the podium
-           const defaultPodium = {
-               first: "Tarran Mackenzie",
-               second: "Jason O'Halloran",
-               third: "Kyle Ryde"
-           };
-
-           // Update podium display
-           function updatePodiumDisplay(first, second, third) {
-               document.getElementById('first-place').textContent = first;
-               document.getElementById('second-place').textContent = second;
-               document.getElementById('third-place').textContent = third;
-
-               // Update results display
-               document.getElementById('result-first').textContent = first;
-               document.getElementById('result-second').textContent = second;
-               document.getElementById('result-third').textContent = third;
-           }
-
-           // Handle form submission
-           predictionForm.addEventListener('submit', function(e) {
+       // Smooth scrolling for anchor links
+       document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+           anchor.addEventListener('click', function(e) {
                e.preventDefault();
 
-               // Get selected values
-               const firstSelect = document.getElementById('first-select');
-               const secondSelect = document.getElementById('second-select');
-               const thirdSelect = document.getElementById('third-select');
+               const targetId = this.getAttribute('href');
+               if(targetId === '#') return;
 
-               const firstPlace = firstSelect.value;
-               const secondPlace = secondSelect.value;
-               const thirdPlace = thirdSelect.value;
-
-               // Check for duplicate selections
-               if (firstPlace === secondPlace || firstPlace === thirdPlace || secondPlace === thirdPlace) {
-                   alert('Please select different riders for each position.');
-                   return;
-               }
-
-               // Update the podium display
-               updatePodiumDisplay(firstPlace, secondPlace, thirdPlace);
-
-               // Show the results container
-               resultsContainer.style.display = 'block';
-
-               // Scroll to results
-               resultsContainer.scrollIntoView({ behavior: 'smooth' });
-
-               // Add celebration animation to the podium
-               const podiumSteps = document.querySelectorAll('.podium-step');
-               podiumSteps.forEach((step, index) => {
-                   step.style.animation = 'none';
-                   setTimeout(() => {
-                       step.style.animation = `bounce 0.5s ease ${index * 0.1}s`;
-                   }, 10);
-               });
-
-               // Add confetti effect
-               createConfetti();
-           });
-
-           // Handle reset button
-           resetBtn.addEventListener('click', function() {
-               // Reset form
-               predictionForm.reset();
-
-               // Reset to default podium
-               updatePodiumDisplay(defaultPodium.first, defaultPodium.second, defaultPodium.third);
-
-               // Hide results container
-               resultsContainer.style.display = 'none';
-
-               // Scroll back to form
-               predictionForm.scrollIntoView({ behavior: 'smooth' });
-           });
-
-           // Initialize with default podium
-           updatePodiumDisplay(defaultPodium.first, defaultPodium.second, defaultPodium.third);
-
-           // Add animation keyframes
-           const style = document.createElement('style');
-           style.textContent = `
-               @keyframes bounce {
-                   0%, 100% { transform: translateY(0); }
-                   50% { transform: translateY(-15px); }
-               }
-               @keyframes fadeInUp {
-                   from { opacity: 0; transform: translateY(20px); }
-                   to { opacity: 1; transform: translateY(0); }
-               }
-           `;
-           document.head.appendChild(style);
-
-           // Add some visual effects on load
-           setTimeout(() => {
-               const podiumSteps = document.querySelectorAll('.podium-step');
-               podiumSteps.forEach((step, index) => {
-                   step.style.opacity = '0';
-                   step.style.transform = 'translateY(30px)';
-                   step.style.animation = `fadeInUp 0.6s ease ${index * 0.2}s forwards`;
-               });
-           }, 500);
-
-           // Add animation to title
-           const title = document.querySelector('.podium-predictor');
-           title.style.opacity = '0';
-           title.style.transform = 'translateY(-30px)';
-           title.style.transition = 'opacity 1s ease, transform 1s ease';
-
-           setTimeout(() => {
-               title.style.opacity = '1';
-               title.style.transform = 'translateY(0)';
-           }, 300);
-
-           // Simple confetti effect
-           function createConfetti() {
-               const colors = ['#e10600', '#ffcc00', '#ffffff', '#1e90ff'];
-
-               for (let i = 0; i < 50; i++) {
-                   const confetti = document.createElement('div');
-                   confetti.style.position = 'fixed';
-                   confetti.style.width = '10px';
-                   confetti.style.height = '10px';
-                   confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                   confetti.style.borderRadius = '50%';
-                   confetti.style.left = `${Math.random() * 100}vw`;
-                   confetti.style.top = '-20px';
-                   confetti.style.zIndex = '9999';
-                   confetti.style.opacity = '0.9';
-                   confetti.style.pointerEvents = 'none';
-
-                   document.body.appendChild(confetti);
-
-                   // Animation
-                   const animation = confetti.animate([
-                       { transform: `translate(0, 0) rotate(0deg)`, opacity: 1 },
-                       { transform: `translate(${Math.random() * 100 - 50}px, 100vh) rotate(${Math.random() * 360}deg)`, opacity: 0 }
-                   ], {
-                       duration: 2000 + Math.random() * 2000,
-                       easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
+               const targetElement = document.querySelector(targetId);
+               if(targetElement) {
+                   window.scrollTo({
+                       top: targetElement.offsetTop - 80,
+                       behavior: 'smooth'
                    });
-
-                   animation.onfinish = () => confetti.remove();
                }
-           }
+           });
+       });
+
+       // Simple animation for cards on scroll
+       const observerOptions = {
+           threshold: 0.1,
+           rootMargin: '0px 0px -50px 0px'
+       };
+
+       const observer = new IntersectionObserver((entries) => {
+           entries.forEach(entry => {
+               if(entry.isIntersecting) {
+                   entry.target.style.opacity = '1';
+                   entry.target.style.transform = 'translateY(0)';
+               }
+           });
+       }, observerOptions);
+
+       // Apply animation to cards
+       document.querySelectorAll('.card').forEach(card => {
+           card.style.opacity = '0';
+           card.style.transform = 'translateY(20px)';
+           card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+           observer.observe(card);
        });
    </script>
 </body>
